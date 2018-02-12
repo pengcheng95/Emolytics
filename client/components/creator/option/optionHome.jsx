@@ -21,6 +21,9 @@ import UserSelect from './Subcomponents/UserSelect.jsx';
 import Annotations from './Subcomponents/Annotation.jsx';
 import DetailedDemographics from './Subcomponents/DetailedDemographics.jsx';
 import HeatMap from './Subcomponents/HeatMap.jsx';
+import Worker from './worker.js';
+ 
+const worker = new Worker();
 
 
 class OptionHome extends React.Component {
@@ -124,16 +127,18 @@ class OptionHome extends React.Component {
       optionId: this.props.currentSection.option.id
     })
       .then((res) => {
-        console.log('GET FRAMES', res.data);
+        worker.postMessage(res.data);
+      })
 
-        this.setState({
-          optionEmotionObj: res.data
+    worker.onmessage = (event) => {
+      this.setState({
+          optionEmotionObj: event.data
         }, () => {
           console.log('run generate charts');
           this.calculateCompletionPerc()
           this.generateCharts();
         })
-      })
+    }
 
 
     this.setState({

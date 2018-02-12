@@ -9,7 +9,7 @@ const auth = require('./server/auth');
 const patreon = require('./server/auth/patreon');
 const cron = require('./server/crontab.js');
 // const secret = require('./key.js').sessions.secret;
-const secret = process.env.SESSION_SECRET;
+// const secret = process.env.SESSION_SECRET;
 const axios = require('axios');
 
 const passport = require('passport'),
@@ -86,7 +86,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 app.use(cookieParser());
 
 app.use(session({
-  secret,
+  secret: 'testing',
   cookie: {
     maxAge: 60 * 60 * 24 * 1000,
     saveUninitialized: true,

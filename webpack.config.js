@@ -81,6 +81,10 @@ var config = {
           ]
         }
       },
+      {
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader' }
+      }
       // {
       //   test: /\.(png|jpg)$/,
       //   loader: 'url?limit=25000'

@@ -30,44 +30,50 @@ exports.getRelevantFrames = (req, res) => {
     }
   };
   let singleUserParam = req.body.userId ? `AND ${req.body.userId} = "userId" ` : ``;
-  sequelize.query(`SELECT "time", AVG("attention") AS "Attention", COUNT("id") AS "Count", 
-                   AVG("anger") AS "Anger", AVG("contempt") AS "Contempt", AVG("disgust") AS "Disgust", 
-                   AVG("fear") AS "Fear", AVG("happiness") AS "Happiness", AVG("neutral") AS "Neutral", 
-                   AVG("sadness") AS "Sadness", AVG("surprise") AS "Surprise" 
-                   FROM "frames" 
-                   WHERE "optionId" = ${req.body.optionId} ${singleUserParam}
-                   GROUP BY "time" 
-                   ORDER BY "time" ASC`, 
-                   { type: sequelize.QueryTypes.SELECT})
-    .then(emoData => {
-      let total = emoData.length;
-      emoData.forEach(data => {
-        emotions.emotionAvg[0].push(parseFloat(data.Anger));
-        emotions.emotionAvg[1].push(parseFloat(data.Contempt));
-        emotions.emotionAvg[2].push(parseFloat(data.Disgust));
-        emotions.emotionAvg[3].push(parseFloat(data.Fear));
-        emotions.emotionAvg[4].push(parseFloat(data.Happiness));
-        emotions.emotionAvg[5].push(data.Neutral/10);
-        emotions.emotionAvg[6].push(parseFloat(data.Sadness));
-        emotions.emotionAvg[7].push(parseFloat(data.Surprise));
-        emotions.attention.push(data.Attention);
-        emotions.count.push(data.Count)
-        for (feeling in data) {
-          if (feeling === "Neutral") {
-            console.log('feeling neutral')
-            emotions.emotionPerc[feeling] += data[feeling] / 10;
-          } else {
-            emotions.emotionPerc[feeling] += parseFloat(data[feeling]);
-          }
-        }
-      })
-      for (feeling in emotions.emotionPerc) {
-        console.log(feeling);
-        emotions.emotionPerc[feeling] = (emotions.emotionPerc[feeling] / total).toFixed(5);
-      }
+  // sequelize.query(`SELECT "time", AVG("attention") AS "Attention", COUNT("id") AS "Count", 
+  //                  AVG("anger") AS "Anger", AVG("contempt") AS "Contempt", AVG("disgust") AS "Disgust", 
+  //                  AVG("fear") AS "Fear", AVG("happiness") AS "Happiness", AVG("neutral") AS "Neutral", 
+  //                  AVG("sadness") AS "Sadness", AVG("surprise") AS "Surprise" 
+  //                  FROM "frames" 
+  //                  WHERE "optionId" = ${req.body.optionId} ${singleUserParam}
+  //                  GROUP BY "time" 
+  //                  ORDER BY "time" ASC`, 
+  //                  { type: sequelize.QueryTypes.SELECT})
+  //   .then(emoData => {
+  //     let total = emoData.length;
+  //     emoData.forEach(data => {
+  //       emotions.emotionAvg[0].push(parseFloat(data.Anger));
+  //       emotions.emotionAvg[1].push(parseFloat(data.Contempt));
+  //       emotions.emotionAvg[2].push(parseFloat(data.Disgust));
+  //       emotions.emotionAvg[3].push(parseFloat(data.Fear));
+  //       emotions.emotionAvg[4].push(parseFloat(data.Happiness));
+  //       emotions.emotionAvg[5].push(data.Neutral/10);
+  //       emotions.emotionAvg[6].push(parseFloat(data.Sadness));
+  //       emotions.emotionAvg[7].push(parseFloat(data.Surprise));
+  //       emotions.attention.push(data.Attention);
+  //       emotions.count.push(data.Count)
+  //       for (feeling in data) {
+  //         if (feeling === "Neutral") {
+  //           console.log('feeling neutral')
+  //           emotions.emotionPerc[feeling] += data[feeling] / 10;
+  //         } else {
+  //           emotions.emotionPerc[feeling] += parseFloat(data[feeling]);
+  //         }
+  //       }
+  //     })
+  //     for (feeling in emotions.emotionPerc) {
+  //       console.log(feeling);
+  //       emotions.emotionPerc[feeling] = (emotions.emotionPerc[feeling] / total).toFixed(5);
+  //     }
 
-      res.send(emotions);
-    })
+  //     res.send(emotions);
+  //   })
+
+    sequelize.query(`SELECT * from "frames" WHERE "optionId" = ${req.body.optionId} ${singleUserParam}`, { type: sequelize.QueryTypes.SELECT})
+      .then(emoData => {
+        console.log('EMO DATA', emoData);
+        res.send(emoData);
+      })
 };
 
 exports.getFramesBasedOnUserDemographics = (req, res) => {
